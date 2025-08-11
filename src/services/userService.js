@@ -1,6 +1,6 @@
-import axios from './httpRequester';
+import axios from "./httpRequester";
 
-const path = '/user'
+const path = "/user";
 
 export const signUp = (args) => {
   return axios.post(`${path}/sign-up`, args).catch((e) => e.response);
