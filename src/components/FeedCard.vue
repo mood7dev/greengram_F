@@ -30,6 +30,7 @@ const props = defineProps({
     comment: Object,
   },
   ynDel: Boolean,
+  onDeleteFeed: Function,
 });
 
 const state = reactive({
@@ -46,7 +47,19 @@ const toggleLike = async () => {
   }
 };
 
-const deleteFeed = () => {};
+// const deleteFeed = async () => {
+//   if(!ynDel || !confirm('삭제하시겠습니까?')) { return; }
+
+//   const params = {
+//     feed_id: props.item.feedId
+//   }
+
+//   const res = await deleteFeed(params);
+//   if(res.status === 200) {
+
+//   }
+
+// }
 </script>
 
 <template>
@@ -78,7 +91,10 @@ const deleteFeed = () => {};
         "
       >
         <div className="d-flex flex-column justify-content-center">
-          <i className="fa fa-trash pointer color-red" @click="deleteFeed"></i>
+          <i
+            className="fa fa-trash pointer color-red"
+            @click="$emit('onDeleteFeed', props.item.feedId)"
+          ></i>
         </div>
       </div>
     </div>
