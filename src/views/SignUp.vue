@@ -19,7 +19,7 @@ const state = reactive({
   },
 });
 
-const openFileSelector = () => {
+const openFileSelector = (e) => {
   fileInput.value.click();
 };
 
@@ -51,6 +51,7 @@ const submit = async () => {
     roles: state.data.roles,
   };
   if (state.data.nickName.trim().length > 0) {
+    //닉네임에 무엇인가 적혀있다면 params에 추가
     params.nickName = state.data.nickName.trim();
   }
 
@@ -91,6 +92,7 @@ const submit = async () => {
           />
           <label for="uid" class="form-label">아이디</label>
         </div>
+
         <div class="form-floating">
           <input
             type="password"
