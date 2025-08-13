@@ -16,7 +16,14 @@ const props = defineProps({
       style="display: flex; align-items: center; justify-content: space-between"
     >
       <div
-        style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px"
+        style="
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          margin-top: 10px;
+          margin-bottom: 8px;
+          margin-left: 10px;
+        "
       >
         <profile-img
           :clsValue="'profile pointer'"
@@ -54,5 +61,6 @@ const props = defineProps({
 <style scoped>
 .cmtItemCtnt {
   margin-bottom: 20px;
+  margin-left: 10px;
 }
 </style>

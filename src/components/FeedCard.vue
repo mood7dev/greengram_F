@@ -177,8 +177,8 @@ const toggleLike = async () => {
 .profile {
   border-radius: 50%;
   border: 2px solid transparent;
-  background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1) padding-box,
-    linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1) border-box;
+  background: linear-gradient(45deg, #ff6b6b, #d77fa1, #9b59b6) padding-box,
+    linear-gradient(45deg, #ff6b6b, #d77fa1, #9b59b6) border-box;
   transition: transform 0.3s ease;
 }
 
@@ -287,7 +287,7 @@ const toggleLike = async () => {
 /* 좋아요 섹션 */
 .favCont {
   background: #ffffff;
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid #000;
   padding: 12px 16px !important;
   margin-bottom: 20px;
 }

@@ -121,16 +121,28 @@ const onDeleteComment = async (feedCommentId, idx) => {
 
 <template>
   <div>
-    <div class="overflow-y-auto max-height-240 mt-3 mb-3">
+    <div
+      class="overflow-y-auto max-height-240 mt-3 mb-3"
+      style="background-color: #fff"
+    >
       <div v-if="state.isLoading">Loading...</div>
-      <feed-comment-card
+      <div
         v-for="(item, idx) in state.commentList"
         :key="item.feedCommentId"
-        :item="item"
-        @on-delete-comment="onDeleteComment(item.feedCommentId, idx)"
-      />
+        :style="{
+          borderBottom:
+            idx !== state.commentList.length - 1 ? '1px solid #f0f0f0' : 'none',
+        }"
+      >
+        <feed-comment-card
+          :item="item"
+          @on-delete-comment="onDeleteComment(item.feedCommentId, idx)"
+        />
+      </div>
       <div v-if="state.moreComment" class="mt-3 mb-3">
-        <span class="pointer" @click="getMoreComment">댓글 더보기</span>
+        <span @click="getMoreComment" class="more-comment-link"
+          >―――댓글 더보기</span
+        >
       </div>
     </div>
     <div class="p-2 d-flex flex-row div-top">
@@ -147,4 +159,17 @@ const onDeleteComment = async (feedCommentId, idx) => {
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.more-comment-link {
+  margin-left: 10px;
+  color: #333;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  user-select: none;
+}
+
+.more-comment-link:hover {
+  text-decoration: underline;
+}
+</style>

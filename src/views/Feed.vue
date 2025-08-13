@@ -139,7 +139,7 @@ const initInputs = () => {
 
 <template>
   <section class="back_color">
-    <div class="container d-flex flex-column align-items-center">
+    <div class="container d-flex flex-column align-items-center mt-5">
       <feed-card
         v-for="item in state.list"
         :key="item.id"

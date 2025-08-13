@@ -6,13 +6,17 @@ const messageModal = useMessageModalStore();
 </script>
 
 <template>
-  <div>
+  <div class="app-background">
     <Header />
-    <router-view></router-view>
-    <b-modal v-model="messageModal.state.isShow" ok-only>{{
-      messageModal.state.message
-    }}</b-modal>
+    <router-view />
+    <b-modal v-model="messageModal.state.isShow" ok-only>
+      {{ messageModal.state.message }}
+    </b-modal>
   </div>
 </template>
 
-<style scoped></style>
+<style>
+.app-background {
+  background-color: #f9f9f9;
+}
+</style>
