@@ -41,6 +41,10 @@ const state = reactive({
   // ]
 });
 
+const data = {
+  rowPerPage: 31,
+};
+
 //댓글 등록
 const onPostComment = async () => {
   if (state.comment.trim().length === 0) {
@@ -63,26 +67,34 @@ const onPostComment = async () => {
       writerNm: authenticationStore.state.signedUser.nickName,
       writerPic: authenticationStore.state.signedUser.pic,
       comment: state.comment,
+      isSelf: true,
     };
 
-    state.commentList.unshift(commentItem);
-
+    state.commentList.push(commentItem);
     state.comment = "";
   }
 };
 
 const getMoreComment = async () => {
+  //기존 자체 생성한 댓글은 삭제처리
+  const commentList = state.commentList.filter(
+    (item) => item.isSelf === undefined
+  );
+  state.commentList = commentList;
+
   console.log("getMoreComment clicked");
   state.isLoading = true;
   const params = {
     feed_id: props.feedId,
     start_idx: state.commentList.length,
+    size: data.rowPerPage,
   };
   const res = await getCommentList(params);
   if (res.status === 200) {
-    const moreCommentList = res.data.result;
-    if (moreCommentList.length > 0) {
-      state.commentList = [...state.commentList, ...moreCommentList];
+    const result = res.data.result;
+    state.moreComment = result.moreComment;
+    if (result.commentList.length > 0) {
+      state.commentList.push(...result.commentList);
     }
   }
   state.isLoading = false;
@@ -98,7 +110,7 @@ const onDeleteComment = async (feedCommentId, idx) => {
     return;
   }
 
-  const params = { feedCommentId };
+  const params = { feed_comment_id: feedCommentId };
 
   const res = await deleteComment(params);
   if (res.status === 200) {
@@ -109,7 +121,7 @@ const onDeleteComment = async (feedCommentId, idx) => {
 
 <template>
   <div>
-    <div class="overflow-y-auto max-height-240">
+    <div class="overflow-y-auto max-height-240 mt-3 mb-3">
       <div v-if="state.isLoading">Loading...</div>
       <feed-comment-card
         v-for="(item, idx) in state.commentList"
@@ -126,13 +138,11 @@ const onDeleteComment = async (feedCommentId, idx) => {
         type="text"
         name="commentValue"
         class="flex-grow-1 my_input back_color"
-        placeholder="댓글을 입력하세요..."
+        placeholder="댓글을 입력하세요."
         v-model="state.comment"
         @keyup.enter="onPostComment"
       />
-      <button class="btn btn-outline-primary" @click="onPostComment">
-        등록
-      </button>
+      <button class="btn btn-outline-dark" @click="onPostComment">등록</button>
     </div>
   </div>
 </template>

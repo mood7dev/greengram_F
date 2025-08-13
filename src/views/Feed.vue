@@ -3,8 +3,8 @@ import { ref, reactive, onMounted, onUnmounted } from "vue";
 import { useAuthenticationStore } from "@/stores/authentication";
 import FeedCard from "@/components/FeedCard.vue";
 import { getFeedList, postFeed } from "@/services/feedService";
-
-const INFINITY_SCROLL_GAP = 500;
+import { bindEvent } from "@/utils/commonUtils";
+import "bootstrap-icons/font/bootstrap-icons.css";
 
 const modalCloseButton = ref(null);
 
@@ -24,6 +24,10 @@ const state = reactive({
 const data = {
   page: 1,
   rowPerPage: 20,
+};
+
+const handleScroll = () => {
+  bindEvent(state, window, getData);
 };
 
 onMounted(() => {
@@ -131,20 +135,6 @@ const initInputs = () => {
   state.feed.location = "";
   state.feed.pics = [];
 };
-
-const handleScroll = () => {
-  console.log("스크롤 이벤트");
-  if (
-    state.isFinish ||
-    state.isLoading ||
-    parseInt(window.innerHeight + window.scrollY) + INFINITY_SCROLL_GAP <=
-      document.documentElement.offsetHeight
-  ) {
-    return;
-  }
-  console.log("데이터 가져오기");
-  getData();
-};
 </script>
 
 <template>
@@ -158,6 +148,8 @@ const handleScroll = () => {
       <p v-if="state.isLoading">Loading...</p>
     </div>
   </section>
+
+  <!-- 심플한 모달 -->
   <div
     class="modal fade"
     id="newFeedModal"
@@ -165,48 +157,67 @@ const handleScroll = () => {
     aria-labelledby="newFeedModalLabel"
     aria-hidden="false"
   >
-    <div class="modal-dialog modal-dialog-centered modal-xl">
-      <div class="modal-content" id="newFeedModalContent">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content simple-modal">
         <div class="modal-header">
-          <h5 class="modal-title" id="newFeedModalLabel">새 게시물 만들기</h5>
+          <h5 class="modal-title">새 게시물</h5>
           <button
             type="button"
-            class="btn-close"
+            class="close-btn"
             data-bs-dismiss="modal"
             aria-label="Close"
             ref="modalCloseButton"
-          ></button>
+          >
+            ×
+          </button>
         </div>
-        <div class="modal-body" id="id-modal-body">
-          <div>
-            location:
+
+        <div class="modal-body">
+          <div class="form-group">
             <input
               type="text"
-              name="location"
-              placeholder="위치"
+              class="form-input"
+              placeholder="위치를 입력하세요"
               v-model="state.feed.location"
             />
           </div>
-          <div>
-            contents:
+
+          <div class="form-group">
             <textarea
-              name="contents"
-              placeholder="내용"
+              class="form-textarea"
+              placeholder="무슨 일이 일어나고 있나요?"
               v-model="state.feed.contents"
+              rows="4"
             ></textarea>
           </div>
-          <div>
-            <label
-              >pic:
+
+          <div class="form-group">
+            <label class="file-upload-label">
               <input
-                name="pics"
                 type="file"
                 multiple
                 accept="image/*"
                 @change="handlePicChanged"
-            /></label>
+                class="file-input"
+              />
+              <span class="file-upload-text"
+                ><i class="bi bi-camera-fill"></i> 사진 선택</span
+              >
+            </label>
           </div>
-          <div><button @click="saveFeed">전송</button></div>
+
+          <div class="selected-files" v-if="state.feed.pics.length > 0">
+            선택된 파일: {{ state.feed.pics.length }}개
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn-cancel" data-bs-dismiss="modal">
+            취소
+          </button>
+          <button type="button" class="btn-submit" @click="saveFeed">
+            게시하기
+          </button>
         </div>
       </div>
     </div>
@@ -216,5 +227,169 @@ const handleScroll = () => {
 <style scoped>
 .back_color {
   background-color: #fafafa;
+}
+
+/* 모달 스타일 */
+.simple-modal {
+  border-radius: 16px;
+  border: none;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+
+.modal-header {
+  padding: 24px 24px 16px;
+  border-bottom: 1px solid #e9ecef;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+}
+
+.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 40px;
+  color: #666;
+  cursor: pointer;
+  padding: 0;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+
+.close-btn:hover {
+  background-color: #f8f9fa;
+  color: #333;
+}
+
+.modal-body {
+  padding: 16px 24px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  font-size: 16px;
+  transition: border-color 0.2s ease;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #007bff;
+}
+
+.form-textarea {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  font-size: 16px;
+  resize: vertical;
+  min-height: 100px;
+  font-family: inherit;
+  transition: border-color 0.2s ease;
+}
+
+.form-textarea:focus {
+  outline: none;
+  border-color: #007bff;
+}
+
+.file-upload-label {
+  display: inline-block;
+  padding: 12px 20px;
+  background-color: #f8f9fa;
+  border: 2px dashed #dee2e6;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+  text-align: center;
+}
+
+.file-upload-label:hover {
+  background-color: #e9ecef;
+  border-color: #adb5bd;
+}
+
+.file-input {
+  display: none;
+}
+
+.file-upload-text {
+  color: #666;
+  font-size: 16px;
+  display: block;
+  text-align: center;
+}
+
+.selected-files {
+  color: #007bff;
+  font-size: 14px;
+  margin-top: 8px;
+}
+
+.modal-footer {
+  padding: 16px 24px 24px;
+  border-top: 1px solid #e9ecef;
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.btn-cancel {
+  padding: 10px 20px;
+  border: 2px solid #fff;
+  background-color: #6c757d;
+  color: white;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-cancel:hover {
+  background-color: #5a6268;
+}
+
+.btn-submit {
+  padding: 10px 20px;
+  border: none;
+  background-color: #333;
+  color: white;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.btn-submit:hover {
+  background-color: #000;
+}
+
+.btn-submit:disabled {
+  background-color: #dee2e6;
+  cursor: not-allowed;
 }
 </style>
