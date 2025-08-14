@@ -64,7 +64,7 @@ const toggleLike = async () => {
 </script>
 
 <template>
-  <div class="item mb-3 p-3 w400">
+  <div class="item mt-5 mb-3 p-3 w400">
     <div class="d-flex flex-row ps-3 pe-3">
       <div class="d-flex flex-column justify-content-center">
         <router-link :to="`/profile/${props.item.writerUserId}`">

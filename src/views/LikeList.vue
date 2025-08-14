@@ -22,8 +22,12 @@ const getData = async () => {
   if (res.status === 200) {
     const result = res.data.result;
     if (result && result.length > 0) {
+      result.forEach((item) => {
+        item.isLike = true;
+      });
+
       state.list.push(...result);
-      data.startIdx += result.length; // 다음 조회할 인덱스 증가
+      data.startIdx += result.length;
     }
     if (result.length < data.size) {
       state.isFinish = true;
@@ -31,7 +35,6 @@ const getData = async () => {
   }
   state.isLoading = false;
 };
-
 onMounted(() => {
   getData();
 });
@@ -39,7 +42,7 @@ onMounted(() => {
 
 <template>
   <section class="back_color">
-    <div class="container d-flex flex-column align-items-center mt-5">
+    <div class="container d-flex flex-column align-items-center">
       <feed-card
         v-for="item in state.list"
         :key="item.feedId || item.id"

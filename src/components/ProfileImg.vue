@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import defaultProfileImg from "@/assets/defaultProfileImg.png";
 
 const baseUrl = ref(import.meta.env.VITE_BASE_URL);
@@ -16,43 +16,16 @@ console.log(
   `${baseUrl.value}/pic/profile/${props.userId}/${props.pic}`
 );
 
-const pic = props.pic
-  ? `${baseUrl.value}/pic/profile/${props.userId}/${props.pic}`
-  : defaultProfileImg;
+//props값을 변수에 재할당해서 사용하는 경우 반응성이 사라짐. 이때는 computed를 사용하거나 toRefs 사용해야 함. 아래는 computed로 해결
+const pic = computed(() =>
+  props.pic
+    ? `${baseUrl.value}/pic/profile/${props.userId}/${props.pic}`
+    : defaultProfileImg
+);
 
 const handleImgError = (e) => {
   e.target.src = defaultProfileImg;
   e.target.onError = null;
-};
-
-const getFollowStateText = (state) => {
-  console.Console.log(`state : ${state}`);
-  switch (state) {
-    case 0:
-      return "팔로우";
-    case 3:
-      return "팔로우 취소";
-    case 2:
-      return "맞팔로우";
-  }
-};
-
-/*
-0: 서로 팔로우 안 한 상태
-1: 나만 상대방을 팔로우 한 상태
-2: 상대방만 나를 팔로우 한 상태
-3: 서로 팔로우 한 상태
-*/
-
-/*
-onMounted()
-}
-const res = await getUserProfile(params);
-});
-*/
-
-const removeUserPic = () => {
-  console.log("프로파일 이미지 삭제");
 };
 </script>
 
@@ -97,5 +70,6 @@ const removeUserPic = () => {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  vertical-align: top;
 }
 </style>
