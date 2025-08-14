@@ -104,9 +104,9 @@ const doSignOut = async () => {
               </a>
             </div>
 
-            <!-- 활동 -->
+            <!-- 좋아요 -->
             <div class="nav-item">
-              <a href="#" class="nav-link" title="활동">
+              <router-link to="/likeList" class="nav-link" title="좋아요">
                 <svg
                   width="24"
                   height="24"
@@ -122,7 +122,7 @@ const doSignOut = async () => {
                     stroke-linejoin="round"
                   />
                 </svg>
-              </a>
+              </router-link>
             </div>
 
             <!-- 메시지 -->

@@ -8,10 +8,10 @@ const messageModal = useMessageModalStore();
 <template>
   <div class="app-background">
     <Header />
-    <router-view />
-    <b-modal v-model="messageModal.state.isShow" ok-only>
-      {{ messageModal.state.message }}
-    </b-modal>
+    <router-view></router-view>
+    <b-modal v-model="messageModal.state.isShow" ok-only>{{
+      messageModal.state.message
+    }}</b-modal>
   </div>
 </template>
 

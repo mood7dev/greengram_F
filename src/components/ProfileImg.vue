@@ -24,6 +24,36 @@ const handleImgError = (e) => {
   e.target.src = defaultProfileImg;
   e.target.onError = null;
 };
+
+const getFollowStateText = (state) => {
+  console.Console.log(`state : ${state}`);
+  switch (state) {
+    case 0:
+      return "팔로우";
+    case 3:
+      return "팔로우 취소";
+    case 2:
+      return "맞팔로우";
+  }
+};
+
+/*
+0: 서로 팔로우 안 한 상태
+1: 나만 상대방을 팔로우 한 상태
+2: 상대방만 나를 팔로우 한 상태
+3: 서로 팔로우 한 상태
+*/
+
+/*
+onMounted()
+}
+const res = await getUserProfile(params);
+});
+*/
+
+const removeUserPic = () => {
+  console.log("프로파일 이미지 삭제");
+};
 </script>
 
 <template>
