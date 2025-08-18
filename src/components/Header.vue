@@ -1,5 +1,5 @@
 <script setup>
-import logo from "@/assets/logo.png";
+// import logo from "@/assets/logo.png"; // 기존 로고 import 제거
 import ProfileImg from "./ProfileImg.vue";
 import { useAuthenticationStore } from "@/stores/authentication";
 import { signOut } from "@/services/userService";
@@ -21,7 +21,13 @@ const doSignOut = async () => {
         <!-- 로고 섹션 -->
         <div class="logo-section">
           <router-link to="/" class="logo-link">
-            <img :src="logo" class="logo-img" alt="Instagram" />
+            <!-- 기존 img 태그 대신 새로운 텍스트 로고 -->
+            <div class="logo-text">
+              <span class="logo-prompt">></span>
+              <span class="logo-main"
+                >shap<span class="hashtag">#</span>Gram</span
+              >
+            </div>
           </router-link>
         </div>
 
@@ -175,7 +181,7 @@ const doSignOut = async () => {
                   >
                     <span class="dropdown-item">
                       <span class="dropdown-icon">
-                        <svg viewBox="0 0 24 24" width="24" height="24">
+                        <svg viewBox="0 0 24 24" width="16" height="16">
                           <circle
                             cx="12.004"
                             cy="12.004"
@@ -295,11 +301,37 @@ const doSignOut = async () => {
   text-decoration: none;
 }
 
+/* 새로운 텍스트 로고 스타일 */
+.logo-text {
+  display: flex;
+  align-items: center;
+  font-family: "Brush Script MT", "Lucida Handwriting", cursive;
+  font-size: 24px;
+  font-weight: 400;
+  color: #000000;
+  letter-spacing: 1px;
+  transform: rotate(-1deg);
+}
+
+.logo-prompt {
+  color: #666666;
+  font-family: "Courier New", monospace;
+  margin-right: 8px;
+  font-size: 24px;
+}
+
+.logo-main {
+  color: #000000;
+}
+
+.hashtag {
+  color: #666666;
+  font-weight: 700;
+}
+
+/* 기존 img 로고 스타일 제거 */
 .logo-img {
-  height: 29px;
-  width: auto;
-  object-fit: contain;
-  vertical-align: middle;
+  display: none;
 }
 
 /* 검색 섹션 */
@@ -463,8 +495,12 @@ const doSignOut = async () => {
     gap: 20px;
   }
 
-  .logo-img {
-    height: 24px;
+  .logo-text {
+    font-size: 20px;
+  }
+
+  .logo-prompt {
+    font-size: 20px;
   }
 
   .nav-icon {
@@ -484,6 +520,14 @@ const doSignOut = async () => {
 
   .nav-section {
     min-width: auto;
+  }
+
+  .logo-text {
+    font-size: 18px;
+  }
+
+  .logo-prompt {
+    font-size: 18px;
   }
 }
 

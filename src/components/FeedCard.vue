@@ -27,6 +27,7 @@ const props = defineProps({
     pics: Array,
     contents: String,
     isLike: Boolean,
+    likeCount: Number,
     comment: Object,
   },
   ynDel: Boolean,
@@ -37,14 +38,17 @@ const state = reactive({
   modules: [Navigation, Pagination, Scrollbar, A11y],
   isLike: props.item.isLike,
   pagination: props.item.pics.length <= 5 ? { clickable: true } : null,
+  likeCount: props.item.likeCount,
 });
 
 const toggleLike = async () => {
   console.log("toggleLike click!");
   const data = { feedId: props.item.feedId };
   const res = await toggleFeedLike(data);
+
   if (res.status === 200) {
-    state.isLike = res.data.result;
+    state.isLike = !state.isLike;
+    state.likeCount += state.isLike ? 1 : -1;
   }
 };
 
@@ -128,17 +132,20 @@ const toggleLike = async () => {
         />
       </swiper-slide>
     </swiper>
-    <div class="favCont p-2 d-flex flex-row">
+
+    <div class="favCont p-2 d-flex flex-row align-items-center">
       <i
         :class="`${
           state.isLike ? 'fas' : 'far'
         } fa-heart pointer rem1_2 me-3 color-red`"
         @click="toggleLike"
       ></i>
+      <span class="like-text ms-2">
+        <strong>{{ state.likeCount.toLocaleString() }}</strong>
+        {{ state.likeCount === 1 ? "like" : "likes" }}
+      </span>
     </div>
-    <div class="itemCtnt p-2" v-if="props.item.contents">
-      {{ props.item.contents }}
-    </div>
+
     <feed-comment-container
       :feed-id="props.item.feedId"
       :comments="props.item.comments"
@@ -315,6 +322,15 @@ const toggleLike = async () => {
   color: #e74c3c !important;
 }
 
+.like-text {
+  font-size: 14px;
+  color: #2c3e50;
+}
+
+.like-text strong {
+  font-weight: 600;
+}
+
 /* 컨텐츠 */
 .itemCtnt {
   background: #ffffff;
@@ -322,7 +338,6 @@ const toggleLike = async () => {
   color: #2c3e50;
   font-size: 14px;
   line-height: 1.5;
-
   margin-top: -20px;
 }
 
