@@ -101,7 +101,7 @@ const toggleLike = async () => {
         <div className="d-flex flex-column justify-content-center">
           <i
             className="fa fa-trash pointer color-red"
-            @click="$emit('onDeleteFeed', props.item.feedId)"
+            @click="$emit('onDeleteFeed')"
           ></i>
         </div>
       </div>

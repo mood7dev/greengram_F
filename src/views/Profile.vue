@@ -3,27 +3,38 @@ import loadingImg from "@/assets/loading.gif";
 import ProfileImg from "@/components/ProfileImg.vue";
 import FeedCard from "@/components/FeedCard.vue";
 import { ref, reactive, onMounted, onUnmounted } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import { useRoute, useRouter, onBeforeRouteUpdate } from "vue-router";
 import { useAuthenticationStore } from "@/stores/authentication";
-import { getUserProfile, patchUserProfilePic } from "@/services/userService";
+import {
+  getUserProfile,
+  patchUserProfilePic,
+  deleteUserProfilePic,
+} from "@/services/userService";
 import { postUserFollow, deleteUserFollow } from "@/services/followService";
-import { getFeedList } from "@/services/feedService";
+import { getFeedList, deleteFeed } from "@/services/feedService";
 import { bindEvent } from "@/utils/commonUtils";
 
 const fileInput = ref(null);
-
+const authenticationStore = useAuthenticationStore();
 const route = useRoute(); //PathVariable 데이터 가져오기 위한 용도
 
 const data = {
-  profileUserId: parseInt(route.params.userId),
+  profileUserId: 0,
   page: 1,
   rowPerPage: 20,
 };
 
 const state = reactive({
+  isMyProfile: false,
   isLoading: false,
   isFinish: false,
-  userProfile: {
+  userProfile: null,
+  list: [],
+});
+
+const init = (userId) => {
+  state.isFinish = false;
+  state.userProfile = {
     userId: 0,
     uid: "",
     pic: "",
@@ -34,16 +45,18 @@ const state = reactive({
     followerCount: 0,
     followingCount: 0,
     followState: 0,
-  },
-  list: [],
-});
+  };
+  state.list = [];
 
-const authenticationStore = useAuthenticationStore();
+  data.page = 1;
+  data.profileUserId = userId;
 
+  state.isMyProfile =
+    data.profileUserId === authenticationStore.state.signedUser.userId;
+};
+
+init(parseInt(route.params.userId));
 console.log("route.params.userId:", route.params.userId);
-
-const isMyProfile =
-  data.profileUserId === authenticationStore.state.signedUser.userId;
 
 /*
 팔로우 상태
@@ -97,12 +110,29 @@ const getFeedData = async () => {
   state.isLoading = false;
 };
 
-const removeUserPic = () => {
+const removeUserPic = async () => {
   console.log("프로파일 이미지 삭제");
+
+  const res = await deleteUserProfilePic();
+  if (res.status === 200) {
+    state.userProfile.pic = null;
+    authenticationStore.setSigndUserPic(null);
+  }
+};
+
+const doDeleteFeed = async (feedId, idx) => {
+  console.log("feedId:", feedId);
+  console.log("idx:", idx);
+  const params = { feed_id: feedId };
+
+  const res = await deleteFeed();
+  if ((res.status = 200)) {
+    state.list.splice(idx, 1);
+  }
 };
 
 const onClickProfileImg = () => {
-  if (isMyProfile) {
+  if (state.isMyProfile) {
     fileInput.value.click();
   }
 };
@@ -128,14 +158,51 @@ const handleScroll = () => {
   bindEvent(state, window, getFeedData);
 };
 
-onMounted(() => {
-  window.addEventListener("scroll", handleScroll);
+const getData = () => {
   getUserData();
   getFeedData();
+};
+
+//팔로우 버튼 클릭시
+const onClickFollow = async () => {
+  switch (state.userProfile.followState) {
+    case 0:
+    case 2: //post
+      const postRes = await postUserFollow({ toUserId: data.profileUserId });
+      if (postRes.status === 200) {
+        state.userProfile.followState += 1;
+        state.userProfile.followerCount += 1;
+      }
+      break;
+    default: //delete
+      const deleteRes = await deleteUserFollow({
+        to_user_id: data.profileUserId,
+      });
+      if (deleteRes.status === 200) {
+        state.userProfile.followState -= 1;
+        state.userProfile.followerCount -= 1;
+      }
+      break;
+  }
+};
+
+onMounted(() => {
+  window.addEventListener("scroll", handleScroll);
+  getData();
 });
 
 onUnmounted(() => {
   window.removeEventListener("scroll", handleScroll);
+});
+
+onBeforeRouteUpdate((to, from) => {
+  console.log("onBeforeRouteUpdate: to", to);
+  console.log("to.params.userId:", to.params.userId);
+  const toUserId = parseInt(to.params.userId);
+  if (toUserId !== data.profileUserId) {
+    init(toUserId);
+    getData();
+  }
 });
 </script>
 
@@ -159,11 +226,12 @@ onUnmounted(() => {
               <td class="pointer follow">
                 {{ state.userProfile.followingCount }}
               </td>
-              <td class="pl_10" v-if="!isMyProfile">
+              <td class="pl_10" v-if="!state.isMyProfile">
                 <input
                   type="button"
                   class="instaBtn"
                   :value="getFollowStateText(state.userProfile.followState)"
+                  @click="onClickFollow"
                 />
               </td>
             </tr>
@@ -173,7 +241,7 @@ onUnmounted(() => {
         <div>
           <div class="d-inline-flex" @click="onClickProfileImg">
             <profile-img
-              :clsValue="`profile ${isMyProfile ? 'pointer' : ''}`"
+              :clsValue="`profile ${state.isMyProfile ? 'pointer' : ''}`"
               :size="300"
               :pic="state.userProfile.pic"
               :userId="state.userProfile.userId"
@@ -181,7 +249,7 @@ onUnmounted(() => {
           </div>
           <div
             className="d-inline-flex item_container width-50"
-            v-if="isMyProfile && state.userProfile.pic"
+            v-if="state.isMyProfile && state.userProfile.pic"
           >
             <i
               className="fa fa-minus-square color-red pointer"
@@ -220,9 +288,11 @@ onUnmounted(() => {
 
       <div class="item_container mt-3">
         <feed-card
-          v-for="item in state.list"
+          v-for="(item, idx) in state.list"
           :key="item.feedId"
           :item="item"
+          :yn-del="true"
+          @on-delete-feed="doDeleteFeed(item.feedId, idx)"
         ></feed-card>
       </div>
 
@@ -321,5 +391,8 @@ section {
   background: #0095f6;
   border-color: #0095f6;
   color: white;
+}
+.profile {
+  background-color: #fff;
 }
 </style>

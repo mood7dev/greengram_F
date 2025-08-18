@@ -25,19 +25,26 @@ const props = defineProps({
           margin-left: 10px;
         "
       >
-        <profile-img
-          :clsValue="'profile pointer'"
-          :size="30"
-          :pic="props.item.writerPic"
-          :userId="props.item.writerUserId"
-        />
-        <div style="font-weight: bold">
-          {{
-            props.item.writerNickName
-              ? props.item.writerNickName
-              : props.item.writerUid
-          }}
-        </div>
+        <router-link :to="`/profile/${props.item.writerUserId}`">
+          <profile-img
+            :clsValue="'profile pointer'"
+            :size="30"
+            :pic="props.item.writerPic"
+            :userId="props.item.writerUserId"
+          />
+        </router-link>
+        <router-link
+          :to="`/profile/${props.item.writerUserId}`"
+          style="text-decoration: none; color: inherit"
+        >
+          <div style="font-weight: bold" class="pointer">
+            {{
+              props.item.writerNickName
+                ? props.item.writerNickName
+                : props.item.writerUid
+            }}
+          </div>
+        </router-link>
       </div>
       <template
         v-if="
@@ -62,5 +69,9 @@ const props = defineProps({
 .cmtItemCtnt {
   margin-bottom: 20px;
   margin-left: 10px;
+}
+
+.pointer {
+  cursor: pointer;
 }
 </style>

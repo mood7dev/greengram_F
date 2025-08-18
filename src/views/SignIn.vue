@@ -47,7 +47,7 @@ const submit = async () => {
           <div class="photo-content">
             <div class="logo-area">
               <div class="app-icon">📷</div>
-              <h1 class="app-title">로그인</h1>
+              <h1 class="app-title">𝑺𝒉𝒂𝒑#𝑮𝒓𝒂𝒎</h1>
             </div>
           </div>
         </div>
@@ -96,7 +96,7 @@ const submit = async () => {
 
 <style scoped>
 .login-wrapper {
-  min-height: 100vh;
+  min-height: 80vh;
   background: #ffffff;
   display: flex;
   align-items: center;
@@ -158,11 +158,19 @@ const submit = async () => {
 .polaroid-photo {
   width: 100%;
   height: 320px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(
+    135deg,
+    #000000 0%,
+    #2f2f2f 30%,
+    #6e6e6e 60%,
+    #a9a9a9 80%,
+    #dcdcdc 100%
+  );
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
+  border-radius: 10px;
 }
 
 .photo-content {
@@ -188,8 +196,8 @@ const submit = async () => {
 }
 
 .app-title {
-  font-size: 2.5rem;
-  font-weight: 200;
+  font-style: italic;
+  font-size: 35px;
   margin: 0;
   letter-spacing: 3px;
   text-shadow: 0 3px 6px rgba(0, 0, 0, 0.4);
@@ -239,7 +247,7 @@ const submit = async () => {
 .login-btn {
   width: 100%;
   padding: 14px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #000000 0%);
   color: white;
   border: none;
   border-radius: 6px;
@@ -247,17 +255,20 @@ const submit = async () => {
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2); /* 은은한 실버 하이라이트 그림자 */
   margin-top: 8px;
 }
 
 .login-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 6px 20px rgba(220, 220, 220, 0.6), 0 4px 8px rgba(0, 0, 0, 0.7);
+  background: linear-gradient(135deg, #111111 0%, #555555 50%, #9a9a9a 100%);
 }
 
 .login-btn:active {
   transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.9);
+  background: linear-gradient(135deg, #000000 0%, #2a2a2a 50%, #585858 100%);
 }
 
 .signup-link {
@@ -331,18 +342,5 @@ const submit = async () => {
   .polaroid-bottom {
     padding: 25px 20px 20px;
   }
-}
-
-/* 종이 질감 효과 */
-.main-polaroid::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="4" height="4" viewBox="0 0 4 4"><path fill="%23000" fill-opacity="0.02" d="M1,1 L1,3 L3,3 L3,1 Z"/></svg>');
-  pointer-events: none;
-  z-index: 1;
 }
 </style>
